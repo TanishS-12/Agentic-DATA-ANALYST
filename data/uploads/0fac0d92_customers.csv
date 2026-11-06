@@ -1,0 +1,17 @@
+customer_id,name,city,country,segment,signup_date,lifetime_value
+C001,Alice Mercer,New York,USA,Enterprise,2021-03-15,52400.00
+C002,Bob Tanaka,Tokyo,Japan,SMB,2021-07-22,18750.00
+C003,Clara Osei,London,UK,Enterprise,2020-11-01,97300.00
+C004,David Lim,Singapore,Singapore,SMB,2022-01-10,9800.00
+C005,Elena Vasquez,Mexico City,Mexico,Startup,2022-04-30,4200.00
+C006,Frank Mueller,Berlin,Germany,Enterprise,2020-06-18,134500.00
+C007,Grace Nguyen,Ho Chi Minh City,Vietnam,Startup,2023-02-14,2100.00
+C008,Henry Okafor,Lagos,Nigeria,SMB,2021-12-05,11200.00
+C009,Isabela Costa,São Paulo,Brazil,Enterprise,2021-05-20,61800.00
+C010,James Park,Seoul,South Korea,SMB,2022-09-03,23600.00
+C011,Karen Patel,Mumbai,India,Enterprise,2020-08-25,88900.00
+C012,Luis Flores,Madrid,Spain,Startup,2023-06-11,1500.00
+C013,Maria Schmidt,Vienna,Austria,SMB,2022-03-28,15400.00
+C014,Nadia Rousseau,Paris,France,Enterprise,2021-01-09,109200.00
+C015,Omar Shaikh,Dubai,UAE,SMB,2022-11-17,27800.00
+
