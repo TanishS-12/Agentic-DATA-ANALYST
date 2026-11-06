@@ -1,0 +1,26 @@
+#results-table th,
+#results-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #2B363D;
+  text-align: left;
+  white-space: nowrap;
+}
+
+#results-table tbody tr:hover {
+  background: #1C242A;
+}
+
+#results-table tbody tr.anomaly-row {
+  box-shadow: inset 3px 0 0 0 #E3A23C;
+  background: rgba(227, 162, 60, 0.06);
+}
+
+#drop-zone.dragover {
+  border-color: #E3A23C;
+  background: #1C242A;
+}
+
+::selection {
+  background: #E3A23C;
+  color: #10161A;
+}

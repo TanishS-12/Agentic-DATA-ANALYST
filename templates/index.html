@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Agentic Data Pipeline</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#10161A',
+          surface: '#161D22',
+          raised: '#1C242A',
+          hairline: '#2B363D',
+          fg: '#E7ECEE',
+          dim: '#8FA0A8',
+          amber: '#E3A23C',
+          'amber-dim': '#8A6A33',
+          good: '#5FA88C',
+          bad: '#D97A63',
+        },
+        fontFamily: {
+          display: ['Fraunces', 'serif'],
+          sans: ['IBM Plex Sans', 'sans-serif'],
+          mono: ['IBM Plex Mono', 'monospace'],
+        },
+      },
+    },
+  };
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body class="bg-ink text-fg font-sans antialiased min-h-screen">
+
+<div class="min-h-screen flex flex-col">
+
+  <!-- Top bar -->
+  <header class="border-b border-hairline">
+    <div class="max-w-[1400px] mx-auto px-8 py-5 flex items-baseline justify-between">
+      <div class="flex items-baseline gap-3">
+        <h1 class="font-display text-2xl tracking-tight">Agentic Data Pipeline</h1>
+        <span class="text-dim text-sm font-mono">/ virtual data analyst</span>
+      </div>
+      <div class="text-xs text-dim font-mono" id="engine-status">engine idle</div>
+    </div>
+  </header>
+
+  <div class="flex-1 max-w-[1400px] mx-auto w-full px-8 py-8 grid grid-cols-[280px_1fr] gap-10">
+
+    <!-- Left column: datasets -->
+    <aside class="flex flex-col gap-6">
+
+      <section>
+        <h2 class="text-sm text-dim mb-3">Load a dataset</h2>
+        <label class="block border border-dashed border-hairline rounded-none px-4 py-6 text-center cursor-pointer hover:border-amber-dim transition-colors" id="drop-zone">
+          <input type="file" id="file-input" accept=".csv" class="hidden" />
+          <div class="text-sm text-dim" id="drop-label">Drop a CSV or click to choose one</div>
+        </label>
+        <p class="text-xs text-dim mt-2 leading-relaxed">Files are cleaned, typed, and written into an isolated local SQLite table — nothing leaves this server except the questions you ask.</p>
+      </section>
+
+      <section>
+        <h2 class="text-sm text-dim mb-3">Datasets in this session</h2>
+        <div id="dataset-list" class="flex flex-col gap-2">
+          <div class="text-sm text-dim italic">Nothing loaded yet.</div>
+        </div>
+      </section>
+
+      <section id="schema-panel" class="hidden">
+        <h2 class="text-sm text-dim mb-3">Columns</h2>
+        <div id="schema-columns" class="font-mono text-xs text-dim leading-6"></div>
+      </section>
+
+    </aside>
+
+    <!-- Main column -->
+    <main class="flex flex-col gap-8 min-w-0">
+
+      <!-- Query bar -->
+      <section>
+        <form id="query-form" class="flex flex-col gap-3">
+          <label for="question-input" class="font-display text-lg text-fg">Ask a question about your data</label>
+          <div class="flex gap-3">
+            <input
+              id="question-input"
+              type="text"
+              placeholder="e.g. which regions had the biggest drop in revenue last quarter?"
+              class="flex-1 bg-surface border border-hairline px-4 py-3 text-sm placeholder:text-dim focus:outline-none focus:border-amber-dim"
+              disabled
+            />
+            <button
+              type="submit"
+              class="bg-amber text-ink font-medium text-sm px-6 py-3 hover:bg-amber-dim disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              id="ask-button"
+              disabled
+            >Analyze</button>
+          </div>
+          <p class="text-xs text-dim" id="query-hint">Load a dataset on the left to begin.</p>
+        </form>
+      </section>
+
+      <!-- Results -->
+      <section id="results" class="hidden flex flex-col gap-6">
+
+        <div>
+          <h3 class="text-sm text-dim mb-2">Query translated to SQL</h3>
+          <pre id="sql-output" class="font-mono text-xs bg-surface border border-hairline px-4 py-3 overflow-x-auto whitespace-pre-wrap"></pre>
+        </div>
+
+        <div>
+          <div class="flex items-baseline justify-between mb-2">
+            <h3 class="text-sm text-dim">Result data</h3>
+            <span id="anomaly-flag" class="text-xs font-mono hidden"></span>
+          </div>
+          <div class="border border-hairline overflow-x-auto">
+            <table class="w-full text-xs font-mono" id="results-table">
+              <thead class="bg-surface text-dim"></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <p class="text-xs text-dim mt-2">Rows outlined in amber were flagged by the anomaly model as statistically extreme.</p>
+        </div>
+
+        <div>
+          <div class="flex items-baseline justify-between mb-2">
+            <h3 class="text-sm text-dim">Chart</h3>
+            <select id="chart-type-select" class="bg-surface border border-hairline text-xs text-dim px-2 py-1 focus:outline-none focus:border-amber-dim">
+              <option value="auto">Auto</option>
+              <option value="bar">Bar</option>
+              <option value="line">Line</option>
+              <option value="pie">Pie</option>
+            </select>
+          </div>
+          <div class="border border-hairline bg-surface px-4 py-4" id="chart-wrapper">
+            <canvas id="result-chart" height="90"></canvas>
+            <div id="chart-empty" class="text-xs text-dim hidden">Not enough numeric data in this result to chart.</div>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-sm text-dim mb-2">Analysis</h3>
+          <div id="report-output" class="font-display text-[15px] leading-relaxed text-fg/90 max-w-[70ch]"></div>
+        </div>
+
+      </section>
+
+      <section id="error-box" class="hidden border border-bad/40 bg-bad/10 text-bad text-sm px-4 py-3"></section>
+
+    </main>
+  </div>
+
+  <footer class="border-t border-hairline mt-auto">
+    <div class="max-w-[1400px] mx-auto px-8 py-4 text-xs text-dim font-mono">
+      Flask · Pandas · scikit-learn (IsolationForest) · LangChain · Groq
+    </div>
+  </footer>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
