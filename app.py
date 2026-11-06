@@ -9,6 +9,9 @@ Routes:
   GET  /                  -> dashboard UI
   POST /api/upload        -> ingest a CSV into SQLite, return schema + preview
   POST /api/query         -> run a natural-language question end to end
+                             Accepts either:
+                               { "question": "...", "table_name": "t" }         (single)
+                               { "question": "...", "table_names": ["t1","t2"] } (multi-table / joins)
   GET  /api/datasets      -> list datasets loaded in this session
 """
 
@@ -37,9 +40,38 @@ Path(DB_PATH).parent.mkdir(parents=True, exist_ok=True)
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-key-change-me")
 
-# In-memory registry of datasets loaded this process (table_name -> metadata).
-# A real deployment would persist this per-user; kept simple here on purpose.
+# In-memory registry of datasets (table_name -> metadata).
+# Populated from uploads AND from any tables already in SQLite on startup,
+# so a server restart never loses previously-loaded datasets.
 DATASETS: dict[str, dict] = {}
+
+
+def _restore_datasets_from_db() -> None:
+    """On startup, re-populate DATASETS from every user table already in
+    the SQLite database so a Flask reload / server restart is transparent."""
+    if not Path(DB_PATH).exists():
+        return
+    try:
+        import sqlite3
+        with sqlite3.connect(DB_PATH) as conn:
+            cur = conn.execute(
+                "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
+            )
+            table_names = [row[0] for row in cur.fetchall()]
+
+        for tname in table_names:
+            if tname in DATASETS:
+                continue
+            try:
+                info = data_engine.describe_schema_as_info(DB_PATH, tname)
+                DATASETS[tname] = info
+            except Exception:  # noqa: BLE001
+                pass
+    except Exception:  # noqa: BLE001
+        pass  # DB not ready yet — uploads will populate it lazily
+
+
+_restore_datasets_from_db()
 
 
 @app.route("/")
@@ -89,14 +121,39 @@ def upload():
 def query():
     payload = request.get_json(silent=True) or {}
     question = (payload.get("question") or "").strip()
-    table_name = (payload.get("table_name") or "").strip()
+
+    # Accept either a single table_name (backward-compat) or a list of table_names.
+    raw_names = payload.get("table_names") or payload.get("table_name") or ""
+    if isinstance(raw_names, str):
+        table_names = [raw_names.strip()] if raw_names.strip() else []
+    else:
+        table_names = [t.strip() for t in raw_names if t.strip()]
 
     if not question:
         return jsonify({"error": "Ask a question first."}), 400
-    if table_name not in DATASETS:
-        return jsonify({"error": "Unknown dataset. Upload a CSV first."}), 400
+    if not table_names:
+        return jsonify({"error": "Select at least one dataset first."}), 400
 
-    schema_description = data_engine.describe_schema(DB_PATH, table_name)
+    # Lazily re-hydrate any table the in-memory dict lost (e.g. after a
+    # Flask debug-mode reload) as long as the data is still in SQLite.
+    for tname in table_names:
+        if tname not in DATASETS:
+            try:
+                DATASETS[tname] = data_engine.describe_schema_as_info(DB_PATH, tname)
+            except Exception:  # noqa: BLE001
+                pass  # genuinely unknown — caught below
+
+    unknown = [t for t in table_names if t not in DATASETS]
+    if unknown:
+        return jsonify({
+            "error": f"Unknown dataset(s): {', '.join(unknown)}. Upload them first."
+        }), 400
+
+    # Build a schema description covering all selected tables.
+    if len(table_names) == 1:
+        schema_description = data_engine.describe_schema(DB_PATH, table_names[0])
+    else:
+        schema_description = data_engine.describe_multi_schema(DB_PATH, table_names)
 
     # 1. Natural language -> SQL
     try:

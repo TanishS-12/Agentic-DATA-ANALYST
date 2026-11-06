@@ -1,0 +1,13 @@
+customer_id,first_name,last_name,email,signup_date,country
+1,Rahul,Sharma,rahul@gmail.com,2023-01-15,India
+2,Priya,Verma,priya@gmail.com,2023-02-20,India
+3,Aman,Kumar,aman@gmail.com,2023-03-10,India
+4,Sneha,Patel,sneha@gmail.com,2023-04-05,India
+5,Arjun,Mehta,arjun@gmail.com,2023-05-18,India
+6,Emily,Johnson,emily@gmail.com,2023-01-25,USA
+7,Daniel,Smith,daniel@gmail.com,2023-03-12,USA
+8,Sophia,Brown,sophia@gmail.com,2023-04-22,UK
+9,Liam,Wilson,liam@gmail.com,2023-06-01,UK
+10,Neha,Gupta,neha@gmail.com,2023-06-15,India
+11,Vikram,Singh,vikram@gmail.com,2023-07-01,India
+12,Anjali,Kapoor,anjali@gmail.com,2023-07-10,India

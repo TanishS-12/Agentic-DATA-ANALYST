@@ -42,7 +42,12 @@ Rules:
 - Output ONLY a single SQL SELECT statement. No explanation, no markdown fences.
 - Never write INSERT, UPDATE, DELETE, DROP, ALTER, or any statement that changes data.
 - Only reference columns that exist in the schema below.
-- Use the exact table and column names from the schema.
+- Use the exact table and column names from the schema (always qualify column names with
+  their table name or alias when multiple tables are involved, e.g. orders.customer_id).
+- When the question involves data from multiple tables, write appropriate JOINs.
+  Infer the join key from column names that look like shared identifiers
+  (e.g. customer_id, order_id, product_id). Prefer INNER JOIN unless the question
+  implies keeping unmatched rows, in which case use LEFT JOIN.
 - If the question is ambiguous, make the most reasonable business interpretation.
 - Limit results to at most 500 rows unless the question clearly asks for an aggregate.
 

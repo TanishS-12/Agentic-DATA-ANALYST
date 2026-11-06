@@ -1,0 +1,14 @@
+product_id,product_name,category,unit_price
+101,Wireless Mouse,Electronics,25.0
+102,Keyboard,Electronics,45.0
+103,USB Headphones,Electronics,75.0
+104,Bluetooth Speaker,Electronics,120.0
+105,Smart Watch,Electronics,199.0
+106,Coffee Maker,Home Goods,80.0
+107,Table Lamp,Home Goods,35.0
+108,Office Chair,Home Goods,150.0
+109,Bedsheet Set,Home Goods,60.0
+110,T-Shirt,Apparel,20.0
+111,Jeans,Apparel,55.0
+112,Jacket,Apparel,100.0
+113,Sneakers,Apparel,90.0

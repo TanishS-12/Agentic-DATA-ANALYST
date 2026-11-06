@@ -1,0 +1,37 @@
+order_id,customer_id,order_date,product_category,product_name,quantity,unit_price,discount_pct,status
+ORD-1001,C001,2024-01-05,Software,Analytics Pro,3,1200.00,0,Delivered
+ORD-1002,C003,2024-01-07,Hardware,Server Rack X1,1,8500.00,5,Delivered
+ORD-1003,C006,2024-01-10,Software,Analytics Pro,10,1200.00,15,Delivered
+ORD-1004,C002,2024-01-14,Services,Onboarding Pack,1,2500.00,0,Delivered
+ORD-1005,C011,2024-01-18,Hardware,Workstation Z,4,3200.00,10,Delivered
+ORD-1006,C009,2024-01-22,Software,DataVault Lite,5,800.00,0,Delivered
+ORD-1007,C014,2024-02-01,Hardware,Server Rack X1,2,8500.00,8,Delivered
+ORD-1008,C006,2024-02-05,Services,Support Gold,1,12000.00,0,Delivered
+ORD-1009,C001,2024-02-11,Software,DataVault Lite,2,800.00,0,Delivered
+ORD-1010,C003,2024-02-15,Services,Onboarding Pack,1,2500.00,0,Delivered
+ORD-1011,C010,2024-02-20,Software,Analytics Pro,2,1200.00,0,Delivered
+ORD-1012,C005,2024-02-25,Software,DataVault Lite,1,800.00,10,Delivered
+ORD-1013,C008,2024-03-02,Services,Onboarding Pack,1,2500.00,0,Delivered
+ORD-1014,C011,2024-03-07,Software,Analytics Pro,6,1200.00,12,Delivered
+ORD-1015,C014,2024-03-10,Services,Support Gold,1,12000.00,5,Delivered
+ORD-1016,C006,2024-03-18,Hardware,Workstation Z,8,3200.00,15,Delivered
+ORD-1017,C013,2024-03-22,Software,Analytics Pro,2,1200.00,0,Delivered
+ORD-1018,C007,2024-03-28,Software,DataVault Lite,1,800.00,0,Shipped
+ORD-1019,C015,2024-04-02,Hardware,Server Rack X1,1,8500.00,0,Delivered
+ORD-1020,C009,2024-04-08,Services,Support Gold,1,12000.00,10,Delivered
+ORD-1021,C004,2024-04-12,Software,DataVault Lite,2,800.00,0,Delivered
+ORD-1022,C001,2024-04-17,Hardware,Workstation Z,1,3200.00,0,Delivered
+ORD-1023,C011,2024-04-23,Services,Support Gold,1,12000.00,0,Delivered
+ORD-1024,C006,2024-05-01,Software,Analytics Pro,12,1200.00,20,Delivered
+ORD-1025,C014,2024-05-06,Hardware,Workstation Z,3,3200.00,8,Delivered
+ORD-1026,C003,2024-05-11,Software,Analytics Pro,8,1200.00,10,Delivered
+ORD-1027,C012,2024-05-15,Software,DataVault Lite,1,800.00,0,Cancelled
+ORD-1028,C010,2024-05-20,Services,Onboarding Pack,1,2500.00,0,Delivered
+ORD-1029,C015,2024-05-24,Software,Analytics Pro,3,1200.00,0,Delivered
+ORD-1030,C009,2024-06-01,Hardware,Server Rack X1,2,8500.00,5,Shipped
+ORD-1031,C008,2024-06-05,Software,Analytics Pro,2,1200.00,0,Delivered
+ORD-1032,C013,2024-06-10,Hardware,Workstation Z,1,3200.00,0,Delivered
+ORD-1033,C002,2024-06-15,Software,DataVault Lite,3,800.00,0,Delivered
+ORD-1034,C006,2024-06-20,Services,Support Gold,1,12000.00,0,Delivered
+ORD-1035,C011,2024-06-25,Hardware,Server Rack X1,3,8500.00,10,Shipped
+

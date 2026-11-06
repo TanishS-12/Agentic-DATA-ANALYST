@@ -60,12 +60,12 @@
     <aside class="flex flex-col gap-6">
 
       <section>
-        <h2 class="text-sm text-dim mb-3">Load a dataset</h2>
+        <h2 class="text-sm text-dim mb-3">Load datasets</h2>
         <label class="block border border-dashed border-hairline rounded-none px-4 py-6 text-center cursor-pointer hover:border-amber-dim transition-colors" id="drop-zone">
-          <input type="file" id="file-input" accept=".csv" class="hidden" />
-          <div class="text-sm text-dim" id="drop-label">Drop a CSV or click to choose one</div>
+          <input type="file" id="file-input" accept=".csv" multiple class="hidden" />
+          <div class="text-sm text-dim" id="drop-label">Drop CSV(s) or click to choose</div>
         </label>
-        <p class="text-xs text-dim mt-2 leading-relaxed">Files are cleaned, typed, and written into an isolated local SQLite table — nothing leaves this server except the questions you ask.</p>
+        <p class="text-xs text-dim mt-2 leading-relaxed">Upload multiple CSVs — each becomes its own SQLite table. Tick the tables you want to query together and the agent will write the JOINs for you.</p>
       </section>
 
       <section>
@@ -73,6 +73,13 @@
         <div id="dataset-list" class="flex flex-col gap-2">
           <div class="text-sm text-dim italic">Nothing loaded yet.</div>
         </div>
+      </section>
+
+      <!-- Multi-dataset query selection -->
+      <section id="join-panel" class="hidden">
+        <h2 class="text-sm text-dim mb-1">Query across datasets</h2>
+        <p class="text-xs text-dim mb-2 leading-relaxed">Tick the tables to include — the agent will JOIN them automatically.</p>
+        <div id="join-checklist" class="flex flex-col gap-1"></div>
       </section>
 
       <section id="schema-panel" class="hidden">
@@ -104,7 +111,7 @@
               disabled
             >Analyze</button>
           </div>
-          <p class="text-xs text-dim" id="query-hint">Load a dataset on the left to begin.</p>
+          <p class="text-xs text-dim" id="query-hint">Load a dataset on the left to begin. Select multiple datasets to query across them with JOINs.</p>
         </form>
       </section>
 

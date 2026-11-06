@@ -118,6 +118,37 @@ def describe_schema(db_path: str, table_name: str) -> str:
     return "\n".join(lines)
 
 
+def describe_schema_as_info(db_path: str, table_name: str) -> dict:
+    """Read an existing SQLite table and return the same metadata dict that
+    ``load_csv_to_sqlite`` produces. Used to restore DATASETS on server
+    restart without re-uploading any files."""
+    with sqlite3.connect(db_path) as conn:
+        df = pd.read_sql_query(f'SELECT * FROM "{table_name}"', conn)
+
+    numeric_columns = [c for c in df.columns if pd.api.types.is_numeric_dtype(df[c])]
+    return {
+        "table_name": table_name,
+        "source_filename": f"{table_name}.csv",
+        "row_count": len(df),
+        "columns": list(df.columns),
+        "numeric_columns": numeric_columns,
+        "preview": df.head(8).to_dict(orient="records"),
+    }
+
+
+def describe_multi_schema(db_path: str, table_names: list[str]) -> str:
+    """Produce a combined, LLM-friendly schema description for *multiple*
+    tables. Each table block is separated by a blank line so the model can
+    clearly distinguish them and reason about possible join keys."""
+    blocks = [describe_schema(db_path, t) for t in table_names]
+    header = (
+        f"The database contains {len(table_names)} table(s) available for querying"
+        f" (you may JOIN across them).\n"
+        f"Tables: {', '.join(table_names)}\n\n"
+    )
+    return header + "\n\n".join(blocks)
+
+
 # --------------------------------------------------------------------------
 # Query execution (read-only)
 # --------------------------------------------------------------------------
